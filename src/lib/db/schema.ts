@@ -155,3 +155,37 @@ export const capabilityGrants = sqliteTable(
   },
   (table) => [index("grants_helper_task_idx").on(table.helperId, table.taskId)],
 );
+
+export const actionProposals = sqliteTable(
+  "action_proposals",
+  {
+    id: text("id").primaryKey(),
+    taskId: text("task_id")
+      .notNull()
+      .references(() => tasks.id),
+    stepId: text("step_id"),
+    authorId: text("author_id")
+      .notNull()
+      .references(() => users.id),
+    kind: text("kind").notNull(),
+    body: text("body").notNull(),
+    status: text("status").notNull(),
+    idempotencyKey: text("idempotency_key"),
+    createdAt: text("created_at").notNull(),
+    resolvedAt: text("resolved_at"),
+  },
+  (table) => [index("proposals_task_idx").on(table.taskId, table.status)],
+);
+
+export const approvalEvents = sqliteTable("approval_events", {
+  id: text("id").primaryKey(),
+  proposalId: text("proposal_id")
+    .notNull()
+    .unique()
+    .references(() => actionProposals.id),
+  ownerId: text("owner_id")
+    .notNull()
+    .references(() => users.id),
+  decision: text("decision").notNull(),
+  occurredAt: text("occurred_at").notNull(),
+});

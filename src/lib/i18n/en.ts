@@ -19,7 +19,7 @@ export const en = {
     steps: [
       { title: "You make a short list", body: "A video call, a document, or something you write yourself." },
       { title: "You invite one person", body: "They get a link that expires. They do not get your password." },
-      { title: "You mark what is done", body: "A helper cannot mark a step done. Approving a suggestion comes next." },
+      { title: "You approve the suggestion", body: "Nothing important changes until you say so." },
     ],
     limitsTitle: "What Tether does not do",
     limits: [

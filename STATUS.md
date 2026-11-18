@@ -194,3 +194,20 @@ OPEN BUGS/RISKS: A helper can look but cannot suggest yet. The local signing fal
 NEXT STAGE PROPOSAL: Stage 4 — helper suggestions and owner approval, with the decision written to the audit log.
 AWAITING APPROVAL: NO — the owner pre-approved every stage for this build.
 ```
+
+### Stage 4
+
+```text
+PRODUCT: Tether
+STAGE: 4
+STATUS: PASS
+USER-FACING WORKING FLOWS: A helper suggests that a step is done, with an optional note. The owner sees it under “Waiting for you” and approves or rejects. Approval marks the step done and stays after refresh. Rejection leaves the step undone. A second decision on the same suggestion is refused. The record on the checklist shows “Suggestion approved” and redacts a password typed into the note. A person who is not the owner cannot approve by calling the decision route.
+UI/UX: Waiting queue at 390px (docs/screenshots/04-approval-390.png) and the record at 1440px (docs/screenshots/04-record-1440.png). Approve and Reject name the step. The helper sees “Waiting for the owner” instead of a second suggestion on that step.
+DATA + SECURITY: action_proposals and approval_events. Only a helper with a live grant can suggest. Only the owner can decide. The decision and the step update commit in one transaction. Declined suggestions cannot be carried out. Audit metadata runs through redaction; the suggestion card still shows the owner the note they need to judge.
+TESTS: npm test -> 21 passed; npm run typecheck -> pass; npm run lint -> pass; npm run build -> pass; CI=true npm run test:e2e -> 5 passed.
+REAL INTEGRATIONS: SQLite | SANDBOX: sample family | DISABLED: email, OAuth, password reset, payments, other websites
+FILES CHANGED: proposal migration, suggestion and decision routes, checklist record, screenshots.
+OPEN BUGS/RISKS: The activity list is on the checklist, not a separate screen yet. Text size, contrast, and Spanish are not editable yet. Expired links are rejected in unit tests.
+NEXT STAGE PROPOSAL: Stage 5 — activity screen, revoke remains immediate, large text, and Spanish.
+AWAITING APPROVAL: NO — the owner pre-approved every stage for this build.
+```

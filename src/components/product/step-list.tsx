@@ -8,6 +8,8 @@ export function StepList({
   taskId,
   steps,
   canEdit,
+  suggest = false,
+  pendingStepIds = [],
   doneLabel,
   pendingLabel,
   markDone,
@@ -16,6 +18,8 @@ export function StepList({
   taskId: string;
   steps: StepItem[];
   canEdit: boolean;
+  suggest?: boolean;
+  pendingStepIds?: string[];
   doneLabel: string;
   pendingLabel: string;
   markDone: string;
@@ -53,6 +57,31 @@ export function StepList({
                       {action}
                     </button>
                   </form>
+                ) : null}
+                {suggest && !done && !pendingStepIds.includes(step.id) ? (
+                  <form method="post" action={`/api/tasks/${taskId}/proposals`} className="mt-3 flex flex-col gap-2">
+                    <input type="hidden" name="kind" value="complete_step" />
+                    <input type="hidden" name="stepId" value={step.id} />
+                    <label htmlFor={`note-${step.id}`} className="text-sm font-semibold">
+                      Note, optional
+                    </label>
+                    <input
+                      id={`note-${step.id}`}
+                      name="body"
+                      maxLength={500}
+                      className="min-h-12 rounded-2xl border border-line bg-ivory px-4"
+                    />
+                    <button
+                      type="submit"
+                      aria-label={`Suggest this is done: ${step.instruction}`}
+                      className="inline-flex min-h-12 w-fit items-center rounded-full bg-navy px-5 font-semibold text-ivory"
+                    >
+                      Suggest this is done
+                    </button>
+                  </form>
+                ) : null}
+                {suggest && pendingStepIds.includes(step.id) ? (
+                  <p className="mt-3 font-semibold">Waiting for the owner.</p>
                 ) : null}
               </div>
             </div>
