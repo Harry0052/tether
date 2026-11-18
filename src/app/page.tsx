@@ -5,7 +5,12 @@ import { getDb } from "@/lib/db/client";
 import { getMessages } from "@/lib/i18n";
 import { listOwnedTasks } from "@/lib/tasks/service";
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ deleted?: string }>;
+}) {
+  const params = await searchParams;
   const user = await readSessionUser(getDb());
   const messages = getMessages(user?.locale);
   const named = user && user.displayName !== "Guest" ? user.displayName : null;
@@ -15,6 +20,11 @@ export default async function HomePage() {
 
   return (
     <main id="main" className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-8 sm:py-12">
+      {params.deleted === "1" ? (
+        <p role="status" className="rounded-2xl bg-mint px-4 py-3 font-semibold">
+          Your data was deleted from this server. This browser no longer has a session.
+        </p>
+      ) : null}
       <section className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.3fr)_minmax(18rem,0.7fr)]">
         <div className="max-w-2xl">
           <p className="text-sm font-semibold uppercase tracking-[0.16em] text-ok">{copy.eyebrow}</p>

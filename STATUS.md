@@ -228,3 +228,20 @@ OPEN BUGS/RISKS: Some secondary sentences on People and the invitation form stay
 NEXT STAGE PROPOSAL: Stage 6 — export and deletion, the family completion count, deployment notes, and a pilot plan. No compliance claim.
 AWAITING APPROVAL: NO — the owner pre-approved every stage for this build.
 ```
+
+### Stage 6
+
+```text
+PRODUCT: Tether
+STAGE: 6
+STATUS: PASS
+USER-FACING WORKING FLOWS: Settings shows how many of your checklists were finished after you approved a helper. Download my data returns a JSON file for this session. Delete my data requires the exact display name, removes owned checklists, clears the session, and leaves the home page saying the data was deleted. The earlier flows still pass: checklist, invite, suggestion, approval, revoke, activity, Spanish, and large text.
+UI/UX: No new screen beyond the settings block for the count, download, and delete. Prior screenshots remain the visual record. Delete is a typed confirmation, not an extra dialog library.
+DATA + SECURITY: Export omits password hashes, session tokens, and invite tokens, and it does not include another person’s checklist. Deletion is rejected when the typed name does not match. Authorization tests from earlier stages still hold: a helper cannot approve, a stranger cannot read a checklist, a revoked helper loses access, a declined suggestion is not applied, and a bad invite link returns one generic sentence.
+TESTS: npm test -> 24 passed; npm run typecheck -> pass; npm run lint -> pass; npm run build -> pass; CI=true npm run test:e2e -> 6 passed.
+REAL INTEGRATIONS: SQLite | SANDBOX: sample family; local invite signing fallback when TETHER_INVITE_SECRET is unset | DISABLED: email, OAuth, password reset, payments, other websites, hosted Postgres
+FILES CHANGED: export and delete routes, settings count, README, docs/RUNBOOK.md, docs/PILOT.md.
+OPEN BUGS/RISKS: Some secondary copy on People stays in English when the language is Spanish. The pilot has not been run. SQLite is a single file, not a multi-server store. The local invite fallback must be replaced before any public host. This is not a compliance certification and not a claim of public-launch readiness.
+NEXT STAGE PROPOSAL: None in this build. A real pilot would be the next decision, using docs/PILOT.md.
+AWAITING APPROVAL: NO — the owner pre-approved every stage for this build.
+```

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { approvalCompletionCount } from "@/lib/account/privacy";
 import { readSessionUser } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/client";
 import { getMessages } from "@/lib/i18n";
@@ -131,6 +132,46 @@ export default async function SettingsPage({
             : "Invitation links are signed with the server secret. The secret is not shown here. Tether still does not email the link."}
         </p>
       </section>
+
+      {user ? (
+        <section aria-labelledby="metric-title" className="rounded-[var(--radius-card)] border border-line bg-card p-5">
+          <h2 id="metric-title" className="font-display text-3xl tracking-tight">
+            Your checklists
+          </h2>
+          <p className="mt-3 text-lg leading-7">
+            Finished after you approved a helper:{" "}
+            <strong>{approvalCompletionCount(getDb(), user.id)}</strong>
+          </p>
+          <p className="mt-2 text-muted">This counts only your checklists. It is not a public total and it is not a chart.</p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <a href="/api/account/export" className="inline-flex min-h-12 items-center rounded-full bg-mint px-5 font-semibold text-navy">
+              Download my data
+            </a>
+          </div>
+          <form method="post" action="/api/account/delete" className="mt-4">
+            <label htmlFor="confirmName" className="font-semibold">
+              Delete this browser’s data
+            </label>
+            <p id="confirmName-hint" className="mt-1 text-muted">
+              Type your name exactly. Checklists you own are removed. This cannot be undone here.
+            </p>
+            <input
+              id="confirmName"
+              name="confirmName"
+              aria-describedby="confirmName-hint"
+              className="mt-2 w-full min-h-12 rounded-2xl border border-line bg-ivory px-4 text-lg"
+            />
+            {params.error === "delete" ? (
+              <p role="alert" className="mt-2 text-danger">
+                Type your name exactly. Nothing was deleted.
+              </p>
+            ) : null}
+            <button type="submit" className="mt-3 inline-flex min-h-12 items-center rounded-full bg-danger px-5 font-semibold text-ivory">
+              Delete my data
+            </button>
+          </form>
+        </section>
+      ) : null}
 
       <section aria-labelledby="disabled-title">
         <h2 id="disabled-title" className="font-display text-3xl tracking-tight">
