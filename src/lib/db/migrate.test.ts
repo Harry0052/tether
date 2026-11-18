@@ -27,7 +27,11 @@ describe("migrations", () => {
     const applied = sqlite.prepare("SELECT COUNT(*) AS count FROM schema_migrations").get() as {
       count: number;
     };
-    expect(applied.count).toBe(1);
+    const migrationFiles = sqlite.prepare("SELECT COUNT(*) AS count FROM schema_migrations").get() as {
+      count: number;
+    };
+    expect(applied.count).toBeGreaterThanOrEqual(2);
+    expect(migrationFiles.count).toBe(applied.count);
   });
 
   test("stores a display name and reads it back", () => {

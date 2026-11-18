@@ -4,21 +4,22 @@ export const en = {
   control: "You are in control of anything you create here.",
   nav: {
     home: "Home",
+    tasks: "Tasks",
     settings: "Settings",
   },
   home: {
     eyebrow: "Help, without handing over a password",
     title: "Stay in charge while someone you trust helps.",
-    lede: "Tether is a place to keep a shared checklist. A helper will be able to suggest the next step. You will approve it. This foundation stores your name, and nothing else yet.",
-    primary: "Save your name",
+    lede: "Make a checklist for something you want to do with a trusted person. You mark the steps. Tether saves them here. A helper cannot join yet.",
+    primary: "Start a checklist",
     returning: "Welcome back",
     returningBody: "Your name is saved on this server for this browser.",
     change: "Change your name",
     stepsTitle: "What the checklist will do",
     steps: [
       { title: "You make a short list", body: "A video call, a document, or something you write yourself." },
-      { title: "You invite one person", body: "They get a link that expires. They do not get your password." },
-      { title: "You approve the suggestion", body: "Nothing important changes until you say so." },
+      { title: "You mark what is done", body: "Refresh the page and the same steps are still there." },
+      { title: "A helper comes later", body: "Inviting someone, and approving their suggestion, is not on this screen yet." },
     ],
     limitsTitle: "What Tether does not do",
     limits: [

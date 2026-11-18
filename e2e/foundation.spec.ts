@@ -18,7 +18,7 @@ test("a visitor can save a name and see it after refresh", async ({ page }) => {
   await expect(page.getByRole("link", { name: "Skip to content" })).toBeFocused();
 
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.getByRole("link", { name: "Save your name" }).click();
+  await page.getByRole("link", { name: "Settings" }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Settings" })).toBeVisible();
   await page.getByLabel("What should we call you?").fill("Nora Alvarez");
   await page.getByRole("button", { name: "Save name" }).click();

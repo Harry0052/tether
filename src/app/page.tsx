@@ -3,11 +3,14 @@ import { buttonClass } from "@/components/ui/button";
 import { readSessionUser } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/client";
 import { getMessages } from "@/lib/i18n";
+import { listOwnedTasks } from "@/lib/tasks/service";
 
 export default async function HomePage() {
   const messages = getMessages();
   const user = await readSessionUser(getDb());
   const named = user && user.displayName !== "Guest" ? user.displayName : null;
+  const tasks = user ? listOwnedTasks(getDb(), user.id) : [];
+  const latest = tasks.find((task) => task.task.status === "open") ?? tasks[0] ?? null;
   const copy = messages.home;
 
   return (
@@ -19,25 +22,39 @@ export default async function HomePage() {
             {copy.title}
           </h1>
           <p className="mt-5 text-lg leading-8 text-muted">{copy.lede}</p>
-          <div className="mt-8">
-            <Link href="/settings" className={buttonClass("primary")}>
-              {named ? copy.change : copy.primary}
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link href="/tasks/new" className={buttonClass("primary")}>
+              {copy.primary}
+            </Link>
+            <Link href="/sample" className={buttonClass("secondary")}>
+              See the sample family
             </Link>
           </div>
         </div>
         <aside className="rounded-[var(--radius-card)] border border-line bg-card p-5 shadow-[0_1px_0_rgba(20,37,61,0.04)]">
-          {named ? (
+          {latest ? (
             <>
-              <h2 className="font-display text-3xl tracking-tight">{copy.returning}</h2>
-              <p className="mt-3 text-lg leading-7 text-muted">{copy.returningBody}</p>
-              <p className="mt-4 text-2xl font-semibold text-navy">{named}</p>
+              <h2 className="font-display text-3xl tracking-tight">Continue your checklist</h2>
+              <p className="mt-3 text-lg font-semibold">{latest.task.title}</p>
+              <p className="mt-2 text-muted">
+                {latest.doneCount} of {latest.steps.length} steps done. This is yours, not the sample.
+              </p>
+              <Link href={`/tasks/${latest.task.id}`} className={`${buttonClass("secondary")} mt-5`}>
+                Open checklist
+              </Link>
+            </>
+          ) : named ? (
+            <>
+              <h2 className="font-display text-3xl tracking-tight">Welcome back, {named}</h2>
+              <p className="mt-3 text-lg leading-7 text-muted">
+                Your name is saved on this server. You do not have a checklist yet.
+              </p>
             </>
           ) : (
             <>
               <h2 className="font-display text-3xl tracking-tight">This browser is new here</h2>
               <p className="mt-3 text-lg leading-7 text-muted">
-                Save a name and Tether keeps it in its own database. Refreshing does not clear it. There is no
-                password on this step.
+                The first checklist asks what to call you. Tether keeps that name with the list. There is no password on this step.
               </p>
             </>
           )}

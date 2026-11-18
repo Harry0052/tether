@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Source_Sans_3 } from "next/font/google";
+import { shellNav } from "@/components/shell/nav";
 import { SiteFooter } from "@/components/shell/site-footer";
 import { SiteHeader } from "@/components/shell/site-header";
 import { PrimaryNav } from "@/components/shell/primary-nav";
@@ -32,10 +33,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const messages = getMessages();
   const user = await readSessionUser(getDb());
   const named = user && user.displayName !== "Guest" ? user.displayName : null;
-  const items = [
-    { href: "/", label: messages.nav.home, icon: "home" as const },
-    { href: "/settings", label: messages.nav.settings, icon: "settings" as const },
-  ];
+  const items = shellNav();
 
   return (
     <html

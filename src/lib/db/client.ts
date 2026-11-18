@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import Database from "better-sqlite3";
 import { drizzle, type BetterSQLite3Database } from "drizzle-orm/better-sqlite3";
+import { seedDemo } from "./seed";
 import * as schema from "./schema";
 import { migrate } from "./migrate";
 
@@ -29,7 +30,9 @@ export function openDatabase(filename: string) {
 
 export function getSqlite() {
   if (!globalForDb.tetherSqlite) {
-    globalForDb.tetherSqlite = openDatabase(databasePath());
+    const sqlite = openDatabase(databasePath());
+    seedDemo(drizzle(sqlite, { schema }));
+    globalForDb.tetherSqlite = sqlite;
   }
   return globalForDb.tetherSqlite;
 }

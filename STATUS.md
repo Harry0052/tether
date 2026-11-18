@@ -160,3 +160,20 @@ OPEN BUGS/RISKS: Checklists do not exist yet. The local database file is the who
 NEXT STAGE PROPOSAL: Stage 2 — an owner creates a checklist, marks steps done, and still sees them after refresh.
 AWAITING APPROVAL: NO — the owner pre-approved every stage for this build.
 ```
+
+### Stage 2
+
+```text
+PRODUCT: Tether
+STAGE: 2
+STATUS: PASS
+USER-FACING WORKING FLOWS: An owner starts a checklist from a safe template or their own steps, marks every step done, and still sees the completed list after refresh. Marking a step not done reopens it. A second browser with no invitation gets “This checklist is not available to you” and no title. The sample family is labeled Sample, is not in the owner’s inbox, and has no Mark done buttons. An empty custom list is rejected. A dropped network shows an offline message and saves nothing.
+UI/UX: Home, empty inbox, task room, and sample inspected at 390px. Task room also at 1440px (docs/screenshots/02-*). Navigation is Home, Tasks, Settings, with a three-item mobile bar. Pending steps use muted text; done steps use green. Focus rings and labels stay in place. No page errors in the browser run.
+DATA + SECURITY: tasks, task_steps, audit_events, metric_events. Only the owner can read or change a user checklist. Writes check Origin. Create is rate-limited and idempotent. Audit metadata redacts a password typed into a title; the checklist itself still shows the title the owner chose. Demo rows are read-only.
+TESTS: npm test -> 16 passed; npm run typecheck -> pass; npm run lint -> pass; npm run build -> pass; CI=true npm run test:e2e -> 3 passed.
+REAL INTEGRATIONS: SQLite | SANDBOX: sample family rows labeled Sample | DISABLED: email, OAuth, password reset, payments, other websites, helper invitations
+FILES CHANGED: task migration, services, inbox, task room, sample page, screenshots.
+OPEN BUGS/RISKS: A helper still cannot be invited. The fixed mobile bar covers the bottom of a tall viewport until you scroll. Completion is counted from current checklist status, so reopening a list removes that completion metric.
+NEXT STAGE PROPOSAL: Stage 3 — one-use invitation links, a suggest grant, and immediate revoke.
+AWAITING APPROVAL: NO — the owner pre-approved every stage for this build.
+```

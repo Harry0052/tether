@@ -2,7 +2,7 @@
 
 Tether helps someone online without taking over their identity. An account owner keeps a checklist. A trusted helper can suggest. The owner approves. Nobody shares a password.
 
-This repository is early. Stage 1 stores a display name for the browser session. Checklists, invitations, and approvals are not built yet. See `STATUS.md`.
+An owner can save a name and finish a checklist. The result stays after a refresh. Invitations and approvals are not built yet. See `STATUS.md`.
 
 ## Quickstart
 
