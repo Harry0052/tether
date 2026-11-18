@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, gt, inArray, isNull } from "drizzle-orm";
 import { recordAudit } from "@/lib/audit";
 import type { TetherDb } from "@/lib/db/client";
-import { metricEvents, taskSteps, tasks, users } from "@/lib/db/schema";
+import { capabilityGrants, metricEvents, taskSteps, tasks, users } from "@/lib/db/schema";
 import { nowIso } from "@/lib/time";
 import { parseCustomSteps, templateById, type TemplateId } from "@/lib/tasks/templates";
 import { displayNameSchema } from "@/lib/validators/profile";
@@ -13,7 +13,7 @@ export const SAMPLE_TASK_ID = "00000000-0000-4000-8000-000000000010";
 type TaskRow = typeof tasks.$inferSelect;
 type StepRow = typeof taskSteps.$inferSelect;
 
-export type TaskRole = "owner" | "sample";
+export type TaskRole = "owner" | "sample" | "helper";
 
 export type TaskView = {
   task: TaskRow;
@@ -43,13 +43,52 @@ function viewFrom(task: TaskRow, steps: StepRow[], role: TaskRole): TaskView {
   };
 }
 
+function activeGrant(db: TetherDb, userId: string, taskId: string) {
+  return db
+    .select()
+    .from(capabilityGrants)
+    .where(
+      and(
+        eq(capabilityGrants.helperId, userId),
+        eq(capabilityGrants.taskId, taskId),
+        isNull(capabilityGrants.revokedAt),
+        gt(capabilityGrants.expiresAt, nowIso()),
+      ),
+    )
+    .get();
+}
+
 export function viewTask(db: TetherDb, userId: string | null, taskId: string): TaskView | null {
   const task = db.select().from(tasks).where(eq(tasks.id, taskId)).get();
   if (!task) return null;
   const steps = stepsFor(db, task.id);
   if (task.origin === "demo_seed") return viewFrom(task, steps, "sample");
   if (userId && task.ownerId === userId) return viewFrom(task, steps, "owner");
+  if (userId && activeGrant(db, userId, task.id)) return viewFrom(task, steps, "helper");
   return null;
+}
+
+export function listHelpedTasks(db: TetherDb, helperId: string) {
+  const grants = db
+    .select()
+    .from(capabilityGrants)
+    .where(
+      and(
+        eq(capabilityGrants.helperId, helperId),
+        isNull(capabilityGrants.revokedAt),
+        gt(capabilityGrants.expiresAt, nowIso()),
+      ),
+    )
+    .all();
+  const seen = new Set<string>();
+  const views: TaskView[] = [];
+  for (const grant of grants) {
+    if (seen.has(grant.taskId)) continue;
+    seen.add(grant.taskId);
+    const view = viewTask(db, helperId, grant.taskId);
+    if (view?.role === "helper") views.push(view);
+  }
+  return views;
 }
 
 export function listOwnedTasks(db: TetherDb, ownerId: string) {

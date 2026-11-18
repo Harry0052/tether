@@ -9,12 +9,16 @@ export function addDays(iso: string, days: number) {
 export function formatUtc(iso: string, locale: string) {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return iso;
-  return new Intl.DateTimeFormat(locale, {
-    dateStyle: "medium",
-    timeStyle: "short",
+  const formatted = new Intl.DateTimeFormat(locale, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
     timeZone: "UTC",
-    timeZoneName: "short",
   }).format(date);
+  return `${formatted} UTC`;
 }
 
 export function formatDay(day: string, locale: string) {

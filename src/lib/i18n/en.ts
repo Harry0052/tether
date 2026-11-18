@@ -10,7 +10,7 @@ export const en = {
   home: {
     eyebrow: "Help, without handing over a password",
     title: "Stay in charge while someone you trust helps.",
-    lede: "Make a checklist for something you want to do with a trusted person. You mark the steps. Tether saves them here. A helper cannot join yet.",
+    lede: "Make a checklist, invite one person, and keep the password to yourself. They can suggest. You mark what is done.",
     primary: "Start a checklist",
     returning: "Welcome back",
     returningBody: "Your name is saved on this server for this browser.",
@@ -18,8 +18,8 @@ export const en = {
     stepsTitle: "What the checklist will do",
     steps: [
       { title: "You make a short list", body: "A video call, a document, or something you write yourself." },
-      { title: "You mark what is done", body: "Refresh the page and the same steps are still there." },
-      { title: "A helper comes later", body: "Inviting someone, and approving their suggestion, is not on this screen yet." },
+      { title: "You invite one person", body: "They get a link that expires. They do not get your password." },
+      { title: "You mark what is done", body: "A helper cannot mark a step done. Approving a suggestion comes next." },
     ],
     limitsTitle: "What Tether does not do",
     limits: [

@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { InvitePanel } from "@/components/product/invite-panel";
 import { StepList } from "@/components/product/step-list";
 import { formatDay } from "@/lib/time";
 import type { TaskView } from "@/lib/tasks/service";
+import { inviteSigning } from "@/lib/trust/tokens";
 
 export function TaskRoom({ view }: { view: TaskView }) {
   const { task, steps, doneCount, role } = view;
@@ -15,11 +17,9 @@ export function TaskRoom({ view }: { view: TaskView }) {
           {sample ? "Back to the start" : "Back to tasks"}
         </Link>
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          {sample ? (
-            <span className="rounded-full bg-mint px-3 py-1 text-sm font-semibold text-navy">Sample</span>
-          ) : (
-            <span className="rounded-full bg-mint px-3 py-1 text-sm font-semibold text-navy">You own this</span>
-          )}
+          <span className="rounded-full bg-mint px-3 py-1 text-sm font-semibold text-navy">
+            {sample ? "Sample" : role === "helper" ? "You can suggest" : "You own this"}
+          </span>
           <span className="rounded-full bg-ivory px-3 py-1 text-sm font-semibold ring-1 ring-line">
             {task.status === "completed" ? "Complete" : "Open"}
           </span>
@@ -32,8 +32,21 @@ export function TaskRoom({ view }: { view: TaskView }) {
       <p className="rounded-2xl bg-mint px-4 py-3 font-semibold text-navy">
         {sample
           ? "This is the sample family. Mira is not a real person. This is not your checklist, and it cannot be changed."
-          : "You are in control. Only you can mark a step done. A helper cannot join from this screen yet."}
+          : role === "helper"
+            ? "You can only suggest. You cannot mark a step done, and you do not have a password."
+            : "You are in control. Only you can mark a step done."}
       </p>
+
+      {role === "owner" && task.origin === "user" ? (
+        <InvitePanel
+          taskId={task.id}
+          note={
+            inviteSigning().source === "local-fallback"
+              ? "Tether does not email this link. Copy it yourself. This server is using the local development signing key, so do not put it on the public internet."
+              : "Tether does not email this link. Copy it and send it yourself."
+          }
+        />
+      ) : null}
 
       <div>
         <div className="flex items-baseline justify-between gap-3">

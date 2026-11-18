@@ -177,3 +177,20 @@ OPEN BUGS/RISKS: A helper still cannot be invited. The fixed mobile bar covers t
 NEXT STAGE PROPOSAL: Stage 3 — one-use invitation links, a suggest grant, and immediate revoke.
 AWAITING APPROVAL: NO — the owner pre-approved every stage for this build.
 ```
+
+### Stage 3
+
+```text
+PRODUCT: Tether
+STAGE: 3
+STATUS: PASS
+USER-FACING WORKING FLOWS: An owner creates a one-use invitation link for 1, 7, or 30 days. The link is shown once. A helper reviews who invited them, the checklist, the suggest-only capability, and the expiry, then accepts. They can see the checklist and cannot mark a step done. After the owner removes access, the helper’s next load says the checklist is not available and does not show the title. A malformed or expired link says only that it is not valid.
+UI/UX: Invitation form at 390px, review screen at 390px with the accept button above the mobile bar, and Trusted people at 1440px after revoke (docs/screenshots/03-*). People is the fourth nav item. Copy states that email is disabled and when the local signing key is in use.
+DATA + SECURITY: invitations, trusted_relations, capability_grants. Tokens are HMAC-signed and stored as SHA-256 hashes. A bad signature is rejected before any name or title is read. Accept is one-use and transactional. Grants are checked on every read. Revoke sets revoked_at immediately; there is no cached permission. Scope is suggest only.
+TESTS: npm test -> 20 passed; npm run typecheck -> pass; npm run lint -> pass; npm run build -> pass; CI=true npm run test:e2e -> 4 passed.
+REAL INTEGRATIONS: SQLite | SANDBOX: sample family | DISABLED: email delivery, OAuth, password reset, payments, other websites. Invitation signing uses TETHER_INVITE_SECRET or a labeled local fallback.
+FILES CHANGED: trust migration, invite and people screens, grant checks on checklist reads, screenshots.
+OPEN BUGS/RISKS: A helper can look but cannot suggest yet. The local signing fallback must be replaced before any public host. Bearer links can be forwarded until they expire or are used.
+NEXT STAGE PROPOSAL: Stage 4 — helper suggestions and owner approval, with the decision written to the audit log.
+AWAITING APPROVAL: NO — the owner pre-approved every stage for this build.
+```

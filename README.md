@@ -2,7 +2,7 @@
 
 Tether helps someone online without taking over their identity. An account owner keeps a checklist. A trusted helper can suggest. The owner approves. Nobody shares a password.
 
-An owner can save a name and finish a checklist. The result stays after a refresh. Invitations and approvals are not built yet. See `STATUS.md`.
+An owner can finish a checklist and invite one helper with a link that expires. Removing access takes effect on the helper’s next request. Approving a suggestion is not built yet. See `STATUS.md`.
 
 ## Quickstart
 

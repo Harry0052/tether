@@ -2,14 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, ListChecks, Settings, type LucideIcon } from "lucide-react";
+import { Home, ListChecks, Settings, Users, type LucideIcon } from "lucide-react";
 
-export type NavItem = { href: string; label: string; icon: "home" | "settings" | "tasks" };
+export type NavItem = { href: string; label: string; icon: "home" | "settings" | "tasks" | "people" };
 
 const icons: Record<NavItem["icon"], LucideIcon> = {
   home: Home,
   settings: Settings,
   tasks: ListChecks,
+  people: Users,
 };
 
 export function PrimaryNav({ items, variant }: { items: NavItem[]; variant: "desktop" | "mobile" }) {

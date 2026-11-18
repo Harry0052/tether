@@ -3,7 +3,7 @@ import Link from "next/link";
 import { buttonClass } from "@/components/ui/button";
 import { readSessionUser } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/client";
-import { listOwnedTasks } from "@/lib/tasks/service";
+import { listHelpedTasks, listOwnedTasks } from "@/lib/tasks/service";
 import { formatDay } from "@/lib/time";
 
 export const metadata: Metadata = { title: "Tasks" };
@@ -16,6 +16,7 @@ export default async function TasksPage({
   const params = await searchParams;
   const user = await readSessionUser(getDb());
   const items = user ? listOwnedTasks(getDb(), user.id) : [];
+  const helping = user ? listHelpedTasks(getDb(), user.id) : [];
 
   return (
     <main id="main" className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-8 sm:py-12">
@@ -70,6 +71,24 @@ export default async function TasksPage({
           ))}
         </ul>
       )}
+
+      {helping.length > 0 ? (
+        <section aria-labelledby="helping-tasks">
+          <h2 id="helping-tasks" className="font-display text-3xl tracking-tight">
+            Helping someone else
+          </h2>
+          <ul className="mt-3 flex flex-col gap-3">
+            {helping.map((item) => (
+              <li key={item.task.id}>
+                <Link href={`/tasks/${item.task.id}`} className="block rounded-[var(--radius-card)] border border-line bg-card px-5 py-4">
+                  <h3 className="text-xl font-semibold">{item.task.title}</h3>
+                  <p className="mt-2 text-muted">You can suggest. You cannot mark a step done.</p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <p className="text-muted">
         <Link href="/sample" className="font-semibold text-navy underline decoration-mint decoration-2 underline-offset-4">

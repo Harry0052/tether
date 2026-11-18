@@ -95,3 +95,63 @@ export const metricEvents = sqliteTable(
   },
   (table) => [index("metric_owner_idx").on(table.ownerId, table.name)],
 );
+
+export const trustedRelations = sqliteTable(
+  "trusted_relations",
+  {
+    id: text("id").primaryKey(),
+    ownerId: text("owner_id")
+      .notNull()
+      .references(() => users.id),
+    helperId: text("helper_id")
+      .notNull()
+      .references(() => users.id),
+    status: text("status").notNull(),
+    createdAt: text("created_at").notNull(),
+    revokedAt: text("revoked_at"),
+  },
+  (table) => [index("trusted_owner_idx").on(table.ownerId), index("trusted_helper_idx").on(table.helperId)],
+);
+
+export const invitations = sqliteTable(
+  "invitations",
+  {
+    id: text("id").primaryKey(),
+    ownerId: text("owner_id")
+      .notNull()
+      .references(() => users.id),
+    taskId: text("task_id")
+      .notNull()
+      .references(() => tasks.id),
+    tokenHash: text("token_hash").notNull().unique(),
+    scope: text("scope").notNull(),
+    expiresAt: text("expires_at").notNull(),
+    usedAt: text("used_at"),
+    usedBy: text("used_by"),
+    revokedAt: text("revoked_at"),
+    createdAt: text("created_at").notNull(),
+  },
+  (table) => [index("invitations_owner_idx").on(table.ownerId)],
+);
+
+export const capabilityGrants = sqliteTable(
+  "capability_grants",
+  {
+    id: text("id").primaryKey(),
+    ownerId: text("owner_id")
+      .notNull()
+      .references(() => users.id),
+    helperId: text("helper_id")
+      .notNull()
+      .references(() => users.id),
+    taskId: text("task_id")
+      .notNull()
+      .references(() => tasks.id),
+    invitationId: text("invitation_id").references(() => invitations.id),
+    scope: text("scope").notNull(),
+    expiresAt: text("expires_at").notNull(),
+    revokedAt: text("revoked_at"),
+    createdAt: text("created_at").notNull(),
+  },
+  (table) => [index("grants_helper_task_idx").on(table.helperId, table.taskId)],
+);

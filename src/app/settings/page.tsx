@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { readSessionUser } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/client";
 import { getMessages } from "@/lib/i18n";
+import { inviteSigning } from "@/lib/trust/tokens";
 
 export const metadata: Metadata = { title: "Settings" };
 
@@ -60,6 +61,17 @@ export default async function SettingsPage({
           {copy.save}
         </button>
       </form>
+
+      <section aria-labelledby="signing-title" className="rounded-[var(--radius-card)] border border-line bg-card p-5">
+        <h2 id="signing-title" className="font-display text-3xl tracking-tight">
+          Invitation links
+        </h2>
+        <p className="mt-3 leading-7 text-muted">
+          {inviteSigning().source === "local-fallback"
+            ? "This server is using the local development signing key. Invitation links work on this machine. Do not put this server on the public internet until TETHER_INVITE_SECRET is set to a unique value. The key is not shown here."
+            : "Invitation links are signed with the server secret. The secret is not shown here. Tether still does not email the link."}
+        </p>
+      </section>
 
       <section aria-labelledby="disabled-title">
         <h2 id="disabled-title" className="font-display text-3xl tracking-tight">
