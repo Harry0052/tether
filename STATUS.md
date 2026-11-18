@@ -143,3 +143,20 @@ OPEN BUGS/RISKS: Empty product. Risks 1–5 above.
 NEXT STAGE PROPOSAL: Stage 1 foundation — toolchain, design shell, guest display name saved in SQLite.
 AWAITING APPROVAL: NO — the owner pre-approved every stage for this build.
 ```
+
+### Stage 1
+
+```text
+PRODUCT: Tether
+STAGE: 1
+STATUS: PASS
+USER-FACING WORKING FLOWS: A visitor can open the home page, save a display name, refresh, and see that name again. The name is a guest session in SQLite. Home and Settings are the only navigation items. Disabled services are described as text, not buttons.
+UI/UX: Inspected home at 390px and 1440px, and settings at 390px (docs/screenshots/01-*). Skip link receives the first tab stop. Focus outline is a 3px navy ring. Mobile navigation is a bottom bar. The fixed bar covers the bottom of a tall screen until the page is scrolled; body padding leaves room at the end. No console page errors in the end-to-end run.
+DATA + SECURITY: users, sessions, and rate_buckets. Session token is stored as a SHA-256 hash. Cookie is httpOnly, SameSite=Lax, Secure only on HTTPS. Redirects use the browser Host so a save on 127.0.0.1 is not sent to localhost and dropped. Display names reject control characters and bidi overrides. No password is collected.
+TESTS: npm test -> 6 passed; npm run typecheck -> pass; npm run lint -> pass; npm run build -> pass; CI=true npm run test:e2e -> 1 passed (foundation.spec.ts).
+REAL INTEGRATIONS: SQLite | SANDBOX: none | DISABLED: email, OAuth, password reset, payments, other websites
+FILES CHANGED: Next.js app, design tokens, shell, settings, guest session, migration 0001, CI, foundation e2e, three screenshots.
+OPEN BUGS/RISKS: Checklists do not exist yet. The local database file is the whole store. Invite signing is not implemented; the env example names TETHER_INVITE_SECRET for later.
+NEXT STAGE PROPOSAL: Stage 2 — an owner creates a checklist, marks steps done, and still sees them after refresh.
+AWAITING APPROVAL: NO — the owner pre-approved every stage for this build.
+```

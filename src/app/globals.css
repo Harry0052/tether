@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@theme {
+  --color-navy: #14253d;
+  --color-navy-soft: #1d3354;
+  --color-mint: #d7f5e8;
+  --color-mint-deep: #b7ead4;
+  --color-ivory: #fafcfa;
+  --color-card: #ffffff;
+  --color-muted: #3e5168;
+  --color-line: #d5e0da;
+  --color-danger: #8e1e1e;
+  --color-danger-bg: #f8ecec;
+  --color-ok: #0f6b45;
+  --font-sans: var(--font-source), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --radius-card: 1.25rem;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html[data-scale="1.15"] {
+  font-size: 115%;
+}
+
+html[data-scale="1.3"] {
+  font-size: 130%;
+}
+
+html[data-scale="1.5"] {
+  font-size: 150%;
+}
+
+html[data-contrast="high"] {
+  --color-ivory: #ffffff;
+  --color-muted: #14253d;
+  --color-line: #14253d;
+  --color-card: #ffffff;
+}
+
+body {
+  background-color: var(--color-ivory);
+  background-image: radial-gradient(ellipse at top, rgba(215, 245, 232, 0.95), transparent 58%);
+  color: var(--color-navy);
+}
+
+html[data-contrast="high"] body {
+  background-image: none;
+}
+
+::selection {
+  background: #d7f5e8;
+  color: #14253d;
+}
+
+:focus-visible {
+  outline: 3px solid #14253d;
+  outline-offset: 3px;
+}
+
+#main {
+  scroll-margin-top: 5.5rem;
+}
+
+.tether-mark {
+  display: inline-flex;
+  align-items: center;
+}
+
+.tether-mark span {
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 999px;
+  border: 2px solid #14253d;
+  background: #d7f5e8;
+}
+
+.tether-mark span + span {
+  margin-left: -0.38rem;
+  background: #fafcfa;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
