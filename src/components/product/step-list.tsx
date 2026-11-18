@@ -14,6 +14,9 @@ export function StepList({
   pendingLabel,
   markDone,
   markNotDone,
+  suggestLabel = "Suggest this is done",
+  noteLabel = "Note, optional",
+  waitingLabel = "Waiting for the owner.",
 }: {
   taskId: string;
   steps: StepItem[];
@@ -24,6 +27,9 @@ export function StepList({
   pendingLabel: string;
   markDone: string;
   markNotDone: string;
+  suggestLabel?: string;
+  noteLabel?: string;
+  waitingLabel?: string;
 }) {
   return (
     <ol className="flex flex-col gap-3">
@@ -63,7 +69,7 @@ export function StepList({
                     <input type="hidden" name="kind" value="complete_step" />
                     <input type="hidden" name="stepId" value={step.id} />
                     <label htmlFor={`note-${step.id}`} className="text-sm font-semibold">
-                      Note, optional
+                      {noteLabel}
                     </label>
                     <input
                       id={`note-${step.id}`}
@@ -73,15 +79,15 @@ export function StepList({
                     />
                     <button
                       type="submit"
-                      aria-label={`Suggest this is done: ${step.instruction}`}
+                      aria-label={`${suggestLabel}: ${step.instruction}`}
                       className="inline-flex min-h-12 w-fit items-center rounded-full bg-navy px-5 font-semibold text-ivory"
                     >
-                      Suggest this is done
+                      {suggestLabel}
                     </button>
                   </form>
                 ) : null}
                 {suggest && pendingStepIds.includes(step.id) ? (
-                  <p className="mt-3 font-semibold">Waiting for the owner.</p>
+                  <p className="mt-3 font-semibold">{waitingLabel}</p>
                 ) : null}
               </div>
             </div>

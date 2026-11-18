@@ -82,6 +82,22 @@ export function readUserByToken(db: TetherDb, token: string) {
   return toPublicUser(row.user);
 }
 
+export function updatePreferences(
+  db: TetherDb,
+  userId: string,
+  prefs: { locale: string; textScale: string; contrast: string; simplified: boolean },
+) {
+  db.update(users)
+    .set({
+      locale: prefs.locale,
+      textScale: prefs.textScale,
+      contrast: prefs.contrast,
+      simplified: prefs.simplified ? 1 : 0,
+    })
+    .where(eq(users.id, userId))
+    .run();
+}
+
 export function updateDisplayName(db: TetherDb, userId: string, displayName: string) {
   const parsed = displayNameSchema.safeParse(displayName);
   if (!parsed.success) {

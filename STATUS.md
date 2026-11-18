@@ -211,3 +211,20 @@ OPEN BUGS/RISKS: The activity list is on the checklist, not a separate screen ye
 NEXT STAGE PROPOSAL: Stage 5 — activity screen, revoke remains immediate, large text, and Spanish.
 AWAITING APPROVAL: NO — the owner pre-approved every stage for this build.
 ```
+
+### Stage 5
+
+```text
+PRODUCT: Tether
+STAGE: 5
+STATUS: PASS
+USER-FACING WORKING FLOWS: Activity lists events only for checklists the person can still open. After revoke, the helper’s activity list for that checklist is empty. Invitation expiry was already enforced: an expired link cannot be previewed or accepted, and the response has no name or title. Settings saves text size, high contrast, shorter labels, and Spanish. The choice stays on the html element after refresh. Core checklist words (approve, reject, suggest, record) follow the saved language.
+UI/UX: Spanish high-contrast large type at 390px and 1440px (docs/screenshots/05-settings-es-*). The first Tab stop is still the skip link. Mobile nav has five short labels and they fit. Times on Activity are labeled UTC.
+DATA + SECURITY: Preferences are columns on the user row. Activity queries only owned checklists and unexpired, unrevoked grants. Expired invitations still fail closed.
+TESTS: npm test -> 22 passed; npm run typecheck -> pass; npm run lint -> pass; npm run build -> pass; CI=true npm run test:e2e -> 6 passed.
+REAL INTEGRATIONS: SQLite | SANDBOX: sample family | DISABLED: email, OAuth, password reset, payments, other websites
+FILES CHANGED: English and Spanish dictionaries, preference route, activity page, checklist copy, screenshots.
+OPEN BUGS/RISKS: Some secondary sentences on People and the invitation form stay in English when the language is Spanish. There is no data export or account deletion yet. Spanish is a product translation in the repo, not a certified localization.
+NEXT STAGE PROPOSAL: Stage 6 — export and deletion, the family completion count, deployment notes, and a pilot plan. No compliance claim.
+AWAITING APPROVAL: NO — the owner pre-approved every stage for this build.
+```

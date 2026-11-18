@@ -1,10 +1,24 @@
 import Link from "next/link";
 import { InvitePanel } from "@/components/product/invite-panel";
 import { StepList } from "@/components/product/step-list";
+import type { Messages } from "@/lib/i18n";
 import type { ProposalRecord } from "@/lib/proposals/service";
 import { formatDay, formatUtc } from "@/lib/time";
 import type { TaskView } from "@/lib/tasks/service";
 import { inviteSigning } from "@/lib/trust/tokens";
+
+const spanishRecordLabels: Record<string, string> = {
+  task_created: "Lista creada",
+  step_done: "Paso marcado hecho",
+  step_reopened: "Paso marcado pendiente",
+  invitation_created: "Invitación creada",
+  invitation_accepted: "Invitación aceptada",
+  invitation_revoked: "Invitación cancelada",
+  access_revoked: "Acceso quitado",
+  proposal_created: "Propuesta enviada",
+  proposal_approved: "Propuesta aprobada",
+  proposal_declined: "Propuesta rechazada",
+};
 
 const recordLabels: Record<string, string> = {
   task_created: "Checklist created",
@@ -33,11 +47,15 @@ export function TaskRoom({
   proposals = [],
   record = [],
   alert,
+  copy,
+  locale = "en",
 }: {
   view: TaskView;
   proposals?: ProposalRecord[];
   record?: { id: string; type: string; occurredAt: string; metadataJson: string }[];
   alert?: string | null;
+  copy: Messages["room"];
+  locale?: string;
 }) {
   const { task, steps, doneCount, role } = view;
   const sample = role === "sample";
@@ -47,14 +65,14 @@ export function TaskRoom({
     <div className="flex flex-col gap-6">
       <div>
         <Link href={sample ? "/" : "/tasks"} className="text-sm font-semibold text-navy underline decoration-mint decoration-2 underline-offset-4">
-          {sample ? "Back to the start" : "Back to tasks"}
+          {sample ? copy.backHome : copy.backTasks}
         </Link>
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <span className="rounded-full bg-mint px-3 py-1 text-sm font-semibold text-navy">
-            {sample ? "Sample" : role === "helper" ? "You can suggest" : "You own this"}
+            {sample ? copy.sample : role === "helper" ? copy.youSuggest : copy.youOwn}
           </span>
           <span className="rounded-full bg-ivory px-3 py-1 text-sm font-semibold ring-1 ring-line">
-            {task.status === "completed" ? "Complete" : "Open"}
+            {task.status === "completed" ? copy.complete : copy.open}
           </span>
         </div>
         <h1 className="mt-3 font-display text-4xl tracking-tight sm:text-5xl">{task.title}</h1>
@@ -63,11 +81,7 @@ export function TaskRoom({
       </div>
 
       <p className="rounded-2xl bg-mint px-4 py-3 font-semibold text-navy">
-        {sample
-          ? "This is the sample family. Mira is not a real person. This is not your checklist, and it cannot be changed."
-          : role === "helper"
-            ? "You can only suggest. The owner approves a step before it is marked done."
-            : "You are in control. Only you can mark a step done."}
+        {sample ? copy.controlSample : role === "helper" ? copy.controlHelper : copy.controlOwner}
       </p>
       {alert ? (
         <p role="alert" className="rounded-2xl bg-danger-bg px-4 py-3 text-danger">
@@ -88,9 +102,11 @@ export function TaskRoom({
 
       <div>
         <div className="flex items-baseline justify-between gap-3">
-          <h2 className="text-lg font-semibold">Progress</h2>
+          <h2 className="text-lg font-semibold">{copy.progress}</h2>
           <p>
-            {doneCount} of {steps.length} steps done
+            {locale === "es"
+              ? `${doneCount} de ${steps.length} ${copy.stepsDone}`
+              : `${doneCount} of ${steps.length} steps done`}
           </p>
         </div>
         <div
@@ -105,7 +121,9 @@ export function TaskRoom({
         </div>
       </div>
 
-      {role === "owner" ? <SuggestionQueue proposals={proposals.filter((item) => item.status === "pending")} /> : null}
+      {role === "owner" ? (
+        <SuggestionQueue proposals={proposals.filter((item) => item.status === "pending")} copy={copy} />
+      ) : null}
 
       <StepList
         taskId={task.id}
@@ -113,20 +131,23 @@ export function TaskRoom({
         canEdit={role === "owner"}
         suggest={role === "helper"}
         pendingStepIds={proposals.filter((item) => item.status === "pending" && item.kind === "complete_step" && item.stepId).map((item) => item.stepId as string)}
-        doneLabel="Done"
-        pendingLabel="Not done yet"
-        markDone="Mark done"
-        markNotDone="Mark not done"
+        doneLabel={copy.done}
+        pendingLabel={copy.pending}
+        markDone={copy.markDone}
+        markNotDone={copy.markNotDone}
+        suggestLabel={copy.suggest}
+        noteLabel={copy.note}
+        waitingLabel={copy.waitingOwner}
       />
 
       {role === "helper" ? (
         <form method="post" action={`/api/tasks/${task.id}/proposals`} className="rounded-[var(--radius-card)] border border-line bg-card p-5">
           <input type="hidden" name="kind" value="comment" />
           <label htmlFor="comment" className="font-semibold">
-            Leave a note
+            {copy.leaveNote}
           </label>
           <p id="comment-hint" className="mt-1 text-muted">
-            The owner approves the note before it stays on the checklist.
+            {copy.noteHint}
           </p>
           <textarea
             id="comment"
@@ -138,24 +159,24 @@ export function TaskRoom({
             className="mt-3 w-full rounded-2xl border border-line bg-ivory px-4 py-3 text-lg"
           />
           <button type="submit" className="mt-3 inline-flex min-h-12 items-center rounded-full bg-navy px-5 font-semibold text-ivory">
-            Send note
+            {copy.sendNote}
           </button>
         </form>
       ) : null}
 
       <Notes proposals={proposals.filter((item) => item.kind === "comment" && item.status !== "pending")} />
 
-      {role !== "sample" ? <RecordList events={record} /> : null}
+      {role !== "sample" ? <RecordList events={record} copy={copy} locale={locale} /> : null}
     </div>
   );
 }
 
-function SuggestionQueue({ proposals }: { proposals: ProposalRecord[] }) {
+function SuggestionQueue({ proposals, copy }: { proposals: ProposalRecord[]; copy: Messages["room"] }) {
   if (proposals.length === 0) return null;
   return (
     <section aria-labelledby="waiting-title" className="flex flex-col gap-3">
       <h2 id="waiting-title" className="font-display text-3xl tracking-tight">
-        Waiting for you
+        {copy.waiting}
       </h2>
       {proposals.map((proposal) => {
         const label = proposal.kind === "complete_step" ? proposal.stepInstruction ?? "A step" : "A note";
@@ -170,13 +191,13 @@ function SuggestionQueue({ proposals }: { proposals: ProposalRecord[] }) {
               <form method="post" action={`/api/proposals/${proposal.id}/decision`}>
                 <input type="hidden" name="decision" value="approved" />
                 <button type="submit" className="inline-flex min-h-12 items-center rounded-full bg-navy px-5 font-semibold text-ivory">
-                  Approve: {label}
+                  {copy.approve}: {label}
                 </button>
               </form>
               <form method="post" action={`/api/proposals/${proposal.id}/decision`}>
                 <input type="hidden" name="decision" value="declined" />
                 <button type="submit" className="inline-flex min-h-12 items-center rounded-full bg-ivory px-5 font-semibold text-navy ring-1 ring-line">
-                  Reject: {label}
+                  {copy.reject}: {label}
                 </button>
               </form>
             </div>
@@ -208,21 +229,30 @@ function Notes({ proposals }: { proposals: ProposalRecord[] }) {
   );
 }
 
-function RecordList({ events }: { events: { id: string; type: string; occurredAt: string; metadataJson: string }[] }) {
+function RecordList({
+  events,
+  copy,
+  locale,
+}: {
+  events: { id: string; type: string; occurredAt: string; metadataJson: string }[];
+  copy: Messages["room"];
+  locale: string;
+}) {
   if (events.length === 0) return null;
+  const labels = locale === "es" ? spanishRecordLabels : recordLabels;
   return (
     <section aria-labelledby="record-title">
       <h2 id="record-title" className="font-display text-3xl tracking-tight">
-        Record
+        {copy.record}
       </h2>
-      <p className="mt-2 text-muted">Saved on this server. Passwords are not kept in this list.</p>
+      <p className="mt-2 text-muted">{copy.recordHint}</p>
       <ol className="mt-3 flex flex-col gap-2">
         {events.map((event) => {
           const note = recordNote(event.metadataJson);
           return (
             <li key={event.id} className="rounded-2xl bg-white px-4 py-3 ring-1 ring-line">
-              <p className="font-semibold">{recordLabels[event.type] ?? event.type}</p>
-              <p className="text-sm text-muted">{formatUtc(event.occurredAt, "en")}</p>
+              <p className="font-semibold">{labels[event.type] ?? event.type}</p>
+              <p className="text-sm text-muted">{formatUtc(event.occurredAt, locale)}</p>
               {note ? <p className="mt-1">{note}</p> : null}
             </li>
           );

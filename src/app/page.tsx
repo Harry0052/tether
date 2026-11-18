@@ -6,8 +6,8 @@ import { getMessages } from "@/lib/i18n";
 import { listOwnedTasks } from "@/lib/tasks/service";
 
 export default async function HomePage() {
-  const messages = getMessages();
   const user = await readSessionUser(getDb());
+  const messages = getMessages(user?.locale);
   const named = user && user.displayName !== "Guest" ? user.displayName : null;
   const tasks = user ? listOwnedTasks(getDb(), user.id) : [];
   const latest = tasks.find((task) => task.task.status === "open") ?? tasks[0] ?? null;

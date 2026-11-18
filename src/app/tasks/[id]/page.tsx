@@ -6,6 +6,7 @@ import { readSessionUser } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/client";
 import { listProposals, listTaskRecord } from "@/lib/proposals/service";
 import { viewTask } from "@/lib/tasks/service";
+import { getMessages } from "@/lib/i18n";
 
 export const metadata: Metadata = { title: "Checklist" };
 
@@ -39,6 +40,8 @@ export default async function TaskPage({
     <main id="main" className="mx-auto flex w-full max-w-3xl flex-col px-4 py-8 sm:py-12">
       <TaskRoom
         view={view}
+        copy={getMessages(user?.locale).room}
+        locale={user?.locale === "es" ? "es" : "en"}
         proposals={listProposals(getDb(), user?.id ?? null, view.task.id)}
         record={listTaskRecord(getDb(), user?.id ?? null, view.task.id)}
         alert={

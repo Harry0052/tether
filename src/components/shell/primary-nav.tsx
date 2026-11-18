@@ -2,15 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, ListChecks, Settings, Users, type LucideIcon } from "lucide-react";
+import { Home, ListChecks, ScrollText, Settings, Users, type LucideIcon } from "lucide-react";
 
-export type NavItem = { href: string; label: string; icon: "home" | "settings" | "tasks" | "people" };
+export type NavItem = { href: string; label: string; icon: "home" | "settings" | "tasks" | "people" | "activity" };
 
 const icons: Record<NavItem["icon"], LucideIcon> = {
   home: Home,
   settings: Settings,
   tasks: ListChecks,
   people: Users,
+  activity: ScrollText,
 };
 
 export function PrimaryNav({ items, variant }: { items: NavItem[]; variant: "desktop" | "mobile" }) {
@@ -37,7 +38,8 @@ export function PrimaryNav({ items, variant }: { items: NavItem[]; variant: "des
     );
   }
 
-  const columns = items.length === 4 ? "grid-cols-4" : items.length === 3 ? "grid-cols-3" : "grid-cols-2";
+  const columns =
+    items.length >= 5 ? "grid-cols-5" : items.length === 4 ? "grid-cols-4" : items.length === 3 ? "grid-cols-3" : "grid-cols-2";
   return (
     <nav
       aria-label="Primary"
@@ -52,7 +54,7 @@ export function PrimaryNav({ items, variant }: { items: NavItem[]; variant: "des
               <Link
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`flex min-h-16 flex-col items-center justify-center gap-1 px-2 text-sm font-semibold ${
+                className={`flex min-h-16 flex-col items-center justify-center gap-1 px-1 text-center text-xs font-semibold leading-tight ${
                   active ? "text-navy" : "text-muted"
                 }`}
               >

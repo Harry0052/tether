@@ -30,14 +30,14 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const messages = getMessages();
   const user = await readSessionUser(getDb());
+  const messages = getMessages(user?.locale);
   const named = user && user.displayName !== "Guest" ? user.displayName : null;
-  const items = shellNav();
+  const items = shellNav(messages, Boolean(user?.simplified));
 
   return (
     <html
-      lang="en"
+      lang={user?.locale === "es" ? "es" : "en"}
       data-scale={user?.textScale ?? "1"}
       data-contrast={user?.contrast ?? "standard"}
       data-simplified={user?.simplified ? "true" : "false"}
@@ -50,7 +50,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         >
           {messages.skip}
         </a>
-        <SiteHeader product={messages.product} control={messages.control} items={items} displayName={named} />
+        <SiteHeader
+          product={messages.product}
+          control={user?.simplified ? messages.controlShort : messages.control}
+          items={items}
+          displayName={named}
+        />
         <div className="flex-1">{children}</div>
         <SiteFooter line={messages.footer.line} />
         <PrimaryNav items={items} variant="mobile" />
